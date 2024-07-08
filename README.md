@@ -1,69 +1,76 @@
-# InterconnectedCOMsDebug Project
-## Overview
-The InterconnectedCOMsDebug project is designed to facilitate debugging and monitoring of communication between multiple serial ports on a computer. It provides a user interface (UI) for selecting ports, configuring parameters, and displaying log messages.
+# RTLS WiFi System with DWM1001 and ESP8266
+
+This project involves a Real-Time Location System (RTLS) using the DWM1001 module as an anchor. An ESP8266 is used to transmit the distance information calculated by the anchor to a server. The ESP8266 is connected to the DWM1001 via UART and handles various control and communication tasks.
 
 ## Features
-- Port Selection: Choose between multiple COM ports for debugging.
-- Dynamic Configuration: Configure baud rate, data bits, stop bits, and parity for each port.
-- Log Display: View real-time logs of communication activities.
-- Customization: Options to auto-scroll logs, show only message content, and format message displays.
+- **UART Communication:** Establishes communication between the ESP8266 and DWM1001.
+- **Device Initialization:** Controls the startup of the DWM1001, retrieves necessary information (chip ID, Bluetooth ID, version info, etc.), and performs version checks and updates.
+- **Server Registration:** Registers the device with the server and maintains a heartbeat mechanism.
+- **UDP Communication:** Uses custom packet structures for communication between the server and the anchor, including debug, location, registration, etc.
+- **Server Registration:** Registers the device with the server and maintains a heartbeat mechanism.
+- **Command Execution:** Executes various commands from the server, such as enabling/disabling logs, request retries, blinking, and changing IDs.
+- **Software Updates:** Updates both the ESP8266 and DWM1001 firmware.
+- **WiFi Configuration:** Starts in AP mode for WiFi setup through a web interface, with credentials stored in EEPROM.
 
-## Setup
+## Hardware Requirements
+- DWM1001 module
+- ESP8266 module
+- Power supply for both modules
 
-### Requirements
-- Java 11 or higher
-- Maven 3.6.0 or higher
+## Software Requirements
+- Arduino IDE or PlatformIO
+- ESP8266 board support package
+- Required libraries: `ESP8266WiFi`, `ESP8266WebServer`, `ArduinoOTA`, `EEPROM`, `FastCRC`, `Adafruit DAP library`
 
-### Installation
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/burakkcmn/InterconnectedCOMsDebug.git
-cd InterconnectedCOMsDebug
-```
-
-2. Import the project into your IDE.
-
-3. Building the Project
-
-To build the project, run the following command:
-
-```bash
-mvn clean install
-```
+## Installation
+1. Clone this repository:
+    ```sh
+    git clone <repository-url>
+    ```
+2. Open the project in Arduino IDE or PlatformIO.
+3. Install the necessary libraries using Library Manager or PlatformIO.
+4. Configure your WiFi credentials and other settings in the code:
+    ```cpp
+    const char* ssid = "your_SSID";
+    const char* password = "your_PASSWORD";
+    ```
+5. Upload the code to your ESP8266 module.
 
 ## Usage
+1. Power on the DWM1001 and ESP8266 modules.
+2. The ESP8266 will start in AP mode for initial WiFi configuration. Connect to the AP and enter WiFi credentials via the web interface.
+3. The ESP8266 will connect to the specified WiFi network and retrieve necessary information from the DWM1001.
+4. The device will check for any firmware updates and perform updates if necessary.
+5. The ESP8266 will register the device with the server and start sending distance information.
+6. The server and anchor will communicate using UDP with custom packet structures.
 
-### Command Line Parameters
+## Code Structure
+- `main.h`: Main header file including necessary includes and definitions.
+- `setup()`: Initializes UART, WiFi, web server, OTA, and other components.
+- `loop()`: Handles serial communication, server commands, web server, and OTA.
+- `bbaEspUploadManager`: Manages OTA updates and checks for firmware updates.
+- `dwmGpiocontroller`: Controls GPIO operations for DWM1001.
 
-The program supports command line parameters for configuring the COM ports and their settings. Examples:
-
-- For basic port configuration:
-
-
-```bash
-java -cp .\target\interconnectedCOMsDebug-0.0.1-SNAPSHOT.jar com.debug.tool.debugTool port1=COM4;port2=COM5
+## Example
+Here's a snippet of the setup function:
+```cpp
+void setup() {
+    bbaSerial::setup(bbaGlobalSymbols::getSerialBaudrrate());
+    bbaDWMMessenger::getLastErrorMessageRequest();
+    eepromUtil::begin();
+    bbaWifiManager::WifiLoad(true);
+    espUploadManager.OtaConfig(bbaEspUploadManager::UpdateMode::HTTP);
+    espUploadManager.httpUpdateNow();
+    webServer.begin(bbaGlobalSymbols::getWebServicePort());
+    heartbeat.begin();
+    dwmGpiocontroller.begin();
+    dwmGpiocontroller.startDwm();
+    bbaDWMMessenger::registrationRequest();
+}
 ```
-
-```bash
-java -cp .\target\interconnectedCOMsDebug-0.0.1-SNAPSHOT.jar com.debug.ui.fx.debugToolUI port1=COM4;baudrate1=115200;databits1=8;stopbits1=1;parity1=NONE;port2=COM5;baudrate2=115200;databits2=8;stopbits2=1;parity2=NONE
-```
-
-## User Interface
-Upon launching the application, you will see a graphical user interface (GUI) with options to select ports, set parameters, and view communication logs. Key components include:
-
-- Port Selection: Choose between available COM ports.
-- Parameter Configuration: Adjust baud rate, data bits, stop bits, and parity settings.
-- Log Display: Real-time display of communication logs, categorized by port and message type.
-
-## Customization
-- Auto Scroll: Enable or disable automatic scrolling of log messages.
-- Show Just Message: Display only the message content in logs.
-- Format Message: Format log messages for better readability.
 
 ## Contributing
-Contributions are welcome! Feel free to submit issues or pull requests for any enhancements or bug fixes.
+Contributions are welcome! Please submit a pull request or open an issue to discuss your changes.
 
 ## License
 This project is licensed under the BSD 3-Clause License - see the [LICENSE](LICENSE) file for details.
