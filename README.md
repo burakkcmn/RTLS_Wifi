@@ -11,8 +11,8 @@ The InterconnectedCOMsDebug project is designed to facilitate debugging and moni
 ## Setup
 
 ### Requirements
-- Java Development Kit (JDK) 8 or higher
-- IDE (e.g., Eclipse, IntelliJ IDEA) for Java development
+- Java 11 or higher
+- Maven 3.6.0 or higher
 
 ### Installation
 
@@ -25,7 +25,13 @@ cd InterconnectedCOMsDebug
 
 2. Import the project into your IDE.
 
-3. Compile and run the debugToolUI class.
+3. Building the Project
+
+To build the project, run the following command:
+
+```bash
+mvn clean install
+```
 
 ## Usage
 
@@ -37,12 +43,11 @@ The program supports command line parameters for configuring the COM ports and t
 
 
 ```bash
-java  port1=COM4;port2=COM5
+java -cp .\target\interconnectedCOMsDebug-0.0.1-SNAPSHOT.jar com.debug.tool.debugTool port1=COM4;port2=COM5
 ```
 
-
 ```bash
-java  com.debug.tool.debugTool port1=COM4;baudrate1=115200;databits1=8;stopbits1=1;parity1=NONE;port2=COM5;baudrate2=115200;databits2=8;stopbits2=1;parity2=NONE
+java -cp .\target\interconnectedCOMsDebug-0.0.1-SNAPSHOT.jar com.debug.ui.fx.debugToolUI port1=COM4;baudrate1=115200;databits1=8;stopbits1=1;parity1=NONE;port2=COM5;baudrate2=115200;databits2=8;stopbits2=1;parity2=NONE
 ```
 
 ## User Interface
