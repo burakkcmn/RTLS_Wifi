@@ -5,7 +5,6 @@ This project involves a Real-Time Location System (RTLS) using the DWM1001 modul
 ## Features
 - **UART Communication:** Establishes communication between the ESP8266 and DWM1001.
 - **Device Initialization:** Controls the startup of the DWM1001, retrieves necessary information (chip ID, Bluetooth ID, version info, etc.), and performs version checks and updates.
-- **Server Registration:** Registers the device with the server and maintains a heartbeat mechanism.
 - **UDP Communication:** Uses custom packet structures for communication between the server and the anchor, including debug, location, registration, etc.
 - **Server Registration:** Registers the device with the server and maintains a heartbeat mechanism.
 - **Command Execution:** Executes various commands from the server, such as enabling/disabling logs, request retries, blinking, and changing IDs.
@@ -25,7 +24,7 @@ This project involves a Real-Time Location System (RTLS) using the DWM1001 modul
 ## Installation
 1. Clone this repository:
     ```sh
-    git clone <repository-url>
+    git clone https://github.com/burakkcmn/RTLS_Wifi.git
     ```
 2. Open the project in Arduino IDE or PlatformIO.
 3. Install the necessary libraries using Library Manager or PlatformIO.
